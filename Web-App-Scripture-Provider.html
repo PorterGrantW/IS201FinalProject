@@ -1,0 +1,262 @@
+<!-- 
+Scripture generator app created using AI (Copilot and ChatGPT)
+  -->
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Scripture Finder</title>
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+              font-family: "Inter", sans-serif;
+          }
+  
+          body {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              min-height: 100vh;
+              background: linear-gradient(135deg, #6aa3ee, #f3868a);
+              padding: 20px;
+          }
+  
+          .container {
+              max-width: 450px;
+              width: 100%;
+              background: #fff;
+              padding: 25px;
+              border-radius: 12px;
+              box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+              text-align: center;
+              box-sizing: border-box;
+          }
+  
+          h1 {
+              font-size: 26px;
+              color: #333;
+              margin-bottom: 20px;
+              font-weight: 700;
+          }
+  
+          .form-group {
+              margin-bottom: 20px;
+              text-align: left;
+          }
+  
+          label {
+              display: block;
+              font-weight: 600;
+              margin-bottom: 10px;
+              color: #444;
+          }
+  
+          select {
+              width: 100%;
+              padding: 12px;
+              border-radius: 8px;
+              border: 1px solid #ddd;
+              font-size: 16px;
+              background-color: #f7f7f7;
+              transition: all 0.3s ease;
+          }
+  
+          select:focus {
+              border-color: #0078D4;
+              background-color: #fff;
+              outline: none;
+          }
+  
+          button {
+              width: 100%;
+              padding: 14px;
+              font-size: 30px;
+              border: none;
+              border-radius: 8px;
+              background-color: #fff; /* Set background to white */
+              color: transparent; /* Make text transparent */
+              background-image: linear-gradient(135deg, #6aa3ee, #f3868a); /* Gradient background for text */
+              background-clip: text; /* Standard property for non-Webkit browsers */
+              -webkit-background-clip: text; /* Clip the background to the text */
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              margin-top: 20px;
+              position: relative; /* Ensure the pseudo-element is positioned correctly */
+              height: 55px; /* Explicit height to control button size */
+          }
+  
+          button:hover {
+              background-color: #fff; /* Keep the background white on hover */
+              color: transparent; /* Keep text transparent */
+              background-image: linear-gradient(135deg, #6aa3ee, #f3868a); /* Gradient text */
+              background-clip: text; /* Standard property for non-Webkit browsers */
+              -webkit-background-clip: text; /* Clip the background to the text */
+              transform: translateY(-2px);
+          }
+  
+          button:hover::after {
+              content: ''; /* Empty content to create the underline */
+              position: absolute;
+              bottom: 3px; /* Reduce space between text and underline */
+              left: 50%;
+              transform: translateX(-50%); /* Center the underline under the text */
+              width: 50%; /* Make the underline smaller (50% of the button width) */
+              height: 2px; /* Adjust the underline thickness */
+              background-image: linear-gradient(135deg, #6aa3ee, #f3868a); /* Match gradient to text */
+              border-radius: 4px; /* Optional: adds rounded corners to the underline */
+          }
+  
+          .result {
+              margin-top: 30px;
+              padding: 20px;
+              background: #f4f7fb;
+              border-radius: 10px;
+              box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+              text-align: left;
+              opacity: 0;
+              transform: translateY(20px);
+              transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+              max-height: 300px;
+              overflow: auto;
+          }
+  
+          .result p {
+              font-size: 16px;
+              margin-bottom: 10px;
+              color: #333;
+          }
+  
+          .result a {
+              color: #0078D4;
+              text-decoration: none;
+              font-weight: bold;
+          }
+  
+          .result a:hover {
+              text-decoration: underline;
+          }
+  
+          /* Hover effect for the form elements */
+          .form-group select:hover {
+              background-color: #eef2f7;
+          }
+
+          .header-button {
+              position: fixed;
+              top: 0px;
+              /* max-width: 450px; */
+              width: 100%;
+              background: #fff;
+              padding: 15px;
+              /* border-radius: 12px; */
+              /* box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1); */
+              text-align: center;
+              box-sizing: border-box;
+          }
+  
+      </style>
+  </head>
+  <body>
+    <div class="header-button">
+        <a href="./portfolio.html" style="color: rgb(96, 163, 250);">Return to Portfolio</a>
+    </div>
+      <div class="container">
+          <h1>Find scriptures based on your selections!</h1>
+  
+          <div class="form-group">
+              <label for="topic">Select a Topic:</label>
+              <select id="topic">
+                  <option value="faith">Faith</option>
+                  <option value="hope">Hope</option>
+                  <option value="love">Love</option>
+              </select>
+          </div>
+  
+          <div class="form-group">
+              <label for="emotion">Select an Emotion:</label>
+              <select id="emotion">
+                  <option value="comfort">Comfort</option>
+                  <option value="joy">Joy</option>
+                  <option value="strength">Strength</option>
+              </select>
+          </div>
+  
+          <button onclick="getScripture()">Find Scriptures</button>
+  
+          <div id="result" class="result"></div>
+      </div>
+  
+      <script>
+          function getScripture() {
+              const topic = document.getElementById("topic").value;
+              const emotion = document.getElementById("emotion").value;
+              const resultDiv = document.getElementById("result");
+  
+              resultDiv.style.opacity = 0;
+              resultDiv.style.transform = "translateY(20px)";
+  
+              setTimeout(() => {
+                  const scriptures = {
+                      "faith_comfort": [
+                          ["John 3:16", "https://www.churchofjesuschrist.org/study/scriptures/nt/john/3?lang=eng&id=p16#p16"],
+                          ["Ether 12:27", "https://www.churchofjesuschrist.org/study/scriptures/bofm/ether/12?lang=eng&id=p27#p27"]
+                      ],
+                      "faith_joy": [
+                          ["Hebrews 11:1", "https://www.churchofjesuschrist.org/study/scriptures/nt/heb/11?lang=eng&id=p1#p1"],
+                          ["Alma 37:6", "https://www.churchofjesuschrist.org/study/scriptures/bofm/alma/37?lang=eng&id=p6#p6"]
+                      ],
+                      "faith_strength": [
+                          ["Philippians 4:13", "https://www.churchofjesuschrist.org/study/scriptures/nt/philip/4?lang=eng&id=p13#p13"],
+                          ["Mosiah 2:17", "https://www.churchofjesuschrist.org/study/scriptures/bofm/mosiah/2?lang=eng&id=p17#p17"]
+                      ],
+                      "hope_comfort": [
+                          ["Romans 15:13", "https://www.churchofjesuschrist.org/study/scriptures/nt/rom/15?lang=eng&id=p13#p13"],
+                          ["Moroni 7:41", "https://www.churchofjesuschrist.org/study/scriptures/bofm/moro/7?lang=eng&id=p41#p41"]
+                      ],
+                      "hope_joy": [
+                          ["Romans 5:3-5", "https://www.churchofjesuschrist.org/study/scriptures/nt/rom/5?lang=eng&id=p3-p5#p3"],
+                          ["2 Nephi 2:27", "https://www.churchofjesuschrist.org/study/scriptures/bofm/2-ne/2?lang=eng&id=p27#p27"]
+                      ],
+                      "hope_strength": [
+                          ["Isaiah 40:31", "https://www.churchofjesuschrist.org/study/scriptures/ot/isa/40?lang=eng&id=p31#p31"],
+                          ["Mosiah 24:14", "https://www.churchofjesuschrist.org/study/scriptures/bofm/mosiah/24?lang=eng&id=p14#p14"]
+                      ],
+                      "love_comfort": [
+                          ["1 Corinthians 2:11", "https://www.churchofjesuschrist.org/study/scriptures/nt/1-cor/2?lang=eng&id=p11#p11"],
+                          ["3 Nephi 17:7", "https://www.churchofjesuschrist.org/study/scriptures/bofm/3-ne/17?lang=eng&id=p7#p7"]
+                      ],
+                      "love_joy": [
+                          ["John 15:13", "https://www.churchofjesuschrist.org/study/scriptures/nt/john/15?lang=eng&id=p13#p13"],
+                          ["Ether 12:4", "https://www.churchofjesuschrist.org/study/scriptures/bofm/ether/12?lang=eng&id=p4#p4"]
+                      ],
+                      "love_strength": [
+                          ["2 Timothy 1:7", "https://www.churchofjesuschrist.org/study/scriptures/nt/2-tim/1?lang=eng&id=p7#p7"],
+                          ["Alma 37:6", "https://www.churchofjesuschrist.org/study/scriptures/bofm/alma/37?lang=eng&id=p6#p6"]
+                      ]
+                  };
+  
+                  const key = `${topic}_${emotion}`;
+                  const scriptureSet = scriptures[key];
+  
+                  if (scriptureSet) {
+                      resultDiv.innerHTML = `
+                          <p><strong>Bible:</strong> <a href="${scriptureSet[0][1]}" target="_blank">${scriptureSet[0][0]}</a></p>
+                          <p><strong>Book of Mormon:</strong> <a href="${scriptureSet[1][1]}" target="_blank">${scriptureSet[1][0]}</a></p>
+                      `;
+                  } else {
+                      resultDiv.innerHTML = "<p>No scripture found for this combination.</p>";
+                  }
+  
+                  resultDiv.style.opacity = 1;
+                  resultDiv.style.transform = "translateY(0)";
+              }, 200);
+          }
+      </script>
+  </body>
+  </html>
+  
+  
